@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# blgci.sh
+# @author Kohei YAMAMOTO
+
+if [ $# -ne 1 ]; then
+	echo "Usage: ./blgci.sh <entry_id>" 1>&2
+	exit 1
+fi
+
+which -s git
+GIT_EXISTS=$?
+if [ $GIT_EXISTS -ne 0 ]; then
+    echo "blgci: Git is not installed." 1>&2
+    exit 1
+fi
+
+if [ ! -e "./.git" ]; then
+    echo "blgci: Git repository is not found." 1>&2
+    exit 1
+fi
+
+FILE_NAME="${1}.md"
+if [ ! -e $FILE_NAME ]; then
+    echo "blgci: $FILE_NAME is not found." 1>&2
+    exit 1
+fi
+
+grep -q '<!--.\+-->' $FILE_NAME
+TITLE_EXISTS=$?
+if [ $TITLE_EXISTS -ne 0 ]; then
+    echo "blgci: The title is not included in the file." 1>&2
+    echo "       Put \"<!-- [title] -->\" on the first line of the file." 1>&2
+    exit 1
+fi
+
+ENTRY_TITLE=`head -1 $FILE_NAME | sed 's/^[ ]*//' | sed 's/<!-- //' | sed 's/ -->//' `
+ENTRY_URL="http://kymmt90.hatenablog.com/entry/$1"
+
+git add $FILE_NAME
+git commit -F - <<EOF
+$ENTRY_TITLE
+
+$ENTRY_URL
+EOF
