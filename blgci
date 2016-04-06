@@ -54,7 +54,7 @@ if [ $TITLE_EXISTS -ne 0 ]; then
 fi
 
 ENTRY_TITLE=`head -1 $FILE_NAME | sed 's/^[ ]*//' | sed 's/<!-- //' | sed 's/ -->//' `
-ENTRY_URL="http://kymmt90.hatenablog.com/entry/$1"
+ENTRY_URL="http://blog.kymmt.com/entry/$1"
 
 git add $FILE_NAME
 git commit -F - <<EOF
